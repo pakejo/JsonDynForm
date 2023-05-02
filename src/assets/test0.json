@@ -1,0 +1,23 @@
+{
+    "F-layout": {
+        "config": {
+            "direction": "row",
+            "alignment": {
+                "x": "space-around",
+                "y": "center"
+            },
+            "gap": "3"
+        },
+        "content": {
+            "singleControl": {
+                "type": "Input",
+                "name": "FirstTest",
+                "placeholder": "Input 3",
+                "validations": {
+                    "sync": [],
+                    "async": []
+                }
+            }
+        }
+    }
+}

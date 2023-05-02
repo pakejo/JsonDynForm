@@ -1,0 +1,50 @@
+{
+    "F-layout": {
+        "config": {
+            "direction": "flex-row",
+            "alignment": {
+                "x": "space-around",
+                "y": "center"
+            },
+            "gap": "3"
+        },
+        "content": {
+            "group": {
+                "Input1": {
+                    "type": "Input",
+                    "placeholder": "Input 1",
+                    "validations": {
+                        "sync": [],
+                        "async": []
+                    }
+                },
+                "Input2": {
+                    "type": "Input",
+                    "placeholder": "Input 2",
+                    "validations": {
+                        "sync": [],
+                        "async": []
+                    }
+                },
+                "Input4": {
+                    "type": "Input",
+                    "name": "Input 4 label",
+                    "placeholder": "Input 4",
+                    "validations": {
+                        "sync": [],
+                        "async": []
+                    }
+                }
+            },
+            "singleControl": {
+                "type": "Input",
+                "name": "FirstTest",
+                "placeholder": "Input 3",
+                "validations": {
+                    "sync": [],
+                    "async": []
+                }
+            }
+        }
+    }
+}
