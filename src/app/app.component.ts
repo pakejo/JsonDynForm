@@ -11,7 +11,7 @@ export class AppComponent {
   title = 'JsonDynForm';
 
   public data = {
-    'F-layout': {
+    FLayout: {
       config: {
         direction: 'flex-column',
         alignment: {
@@ -21,58 +21,27 @@ export class AppComponent {
         gap: '1',
       },
       content: {
-        'F-layout': {
-          config: {
-            direction: 'flex-column',
-            alignment: {
-              x: 'justify-content-around',
-              y: 'center',
-            },
-            gap: '1',
-          },
-          content: {
-            array: [
-              {
-                key: 'Input1',
-                type: 'Input',
-                name: 'Input test 1',
-                placeholder: 'Input 1',
-                validations: {
-                  sync: [],
-                  async: [],
-                },
-              },
-              {
-                key: 'Input4',
-                type: 'Input',
-                name: 'Input test 4',
-                placeholder: 'Input 4',
-                validations: {
-                  sync: [],
-                  async: [],
-                },
-              },
-              {
-                key: 'Input6',
-                type: 'Input',
-                name: 'Input test 6',
-                placeholder: 'Input 6',
-                validations: {
-                  sync: [],
-                  async: [],
-                },
-              },
-            ],
-          },
-        },
-        singleControl: {
+        Input: {
           type: 'Input',
-          name: 'FirstTest',
-          placeholder: 'Input 3',
+          name: 'FirstInput',
+          label: 'Input',
           validations: {
             sync: [],
             async: [],
           },
+        },
+        Select: {
+          type: 'Select',
+          name: 'FirstSelect',
+          label: 'Select',
+          validations: {
+            sync: [],
+            async: [],
+          },
+          options: [
+            {display: 'Yes', value: true},
+            {display: 'No', value: false},
+          ]
         },
       },
     },

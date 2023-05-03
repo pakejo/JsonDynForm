@@ -1,0 +1,13 @@
+<div class="flex flex-column align-items-start gap-2 m-3">
+  <p-dropdown
+    [formControl]="FormControlRef"
+    [options]="options"
+    [class.ng-invalid]="ControlIsInvalid"
+    [class.ng-dirty]="ControlIsInvalid"
+    optionLabel="display"
+    optionValue="value"
+  ></p-dropdown>
+  <small *ngIf="ControlIsInvalid">
+    {{ getErrorMessage() }}
+  </small>
+</div>

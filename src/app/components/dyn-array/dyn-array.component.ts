@@ -2,6 +2,7 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { FormRenderer } from 'src/app/classes/FormRenderer';
 import { DynArrayDirective } from 'src/app/directives/dyn-array.directive';
+import { Layouts } from 'src/app/enums/layouts.enum';
 import { DynFormService } from 'src/app/services/dyn-form.service';
 import { ObjectChildsAreObjects } from 'src/app/utils/objects-utils';
 
@@ -32,7 +33,7 @@ export class DynArrayComponent implements OnInit {
     );
 
     this.data.forEach((entry) => {
-      if (entry.key === 'F-layout') {
+      if (entry.key === Layouts.FLayout) {
         const { config, content } = entry as any;
         renderer.RenderLayout(this.JsonPath, config, content);
       } else if (ObjectChildsAreObjects(entry)) {

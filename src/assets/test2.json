@@ -1,5 +1,5 @@
 {
-    "F-layout": {
+    "FLayout": {
         "config": {
             "direction": "flex-row",
             "alignment": {
@@ -9,7 +9,7 @@
             "gap": "3"
         },
         "content": {
-            "F-layout": {
+            "FLayout": {
                 "config": {
                     "direction": "flex-row",
                     "alignment": {

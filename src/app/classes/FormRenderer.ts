@@ -10,6 +10,7 @@ import {
 } from '../components/interfaces/FlayoutConfig.interface';
 import { LayoutComponent } from '../components/layout/layout.component';
 import { IRenderizable } from './IRenderizable';
+import { ComponentFactory } from './ComponentFactory';
 
 export class FormRenderer implements IRenderizable {
   constructor(
@@ -60,10 +61,13 @@ export class FormRenderer implements IRenderizable {
       new FormControl()
     );
 
-    const componentRef = this.viewContainerRef.createComponent(InputComponent);
+    const componentRef = ComponentFactory.create(
+      this.viewContainerRef,
+      data.type
+    );
 
     // Set component input
-    componentRef.setInput('JsonPath', inputPath);
-    componentRef.setInput('data', data);
+    componentRef?.setInput('JsonPath', inputPath);
+    componentRef?.setInput('data', data);
   }
 }

@@ -1,9 +1,40 @@
-<div class="flex flex-column gap-2 m-1">
-  <label>{{ name }}</label>
-  <input
-    type="text"
-    pInputText
-    [formControl]="FormControlRef"
-    [placeholder]="placeholder"
-  />
+<div class="m-3">
+  <span
+    class="flex flex-column align-items-start gap-2"
+    *ngIf="icon !== undefined; else simpleInput"
+  >
+    <span class="p-input-icon-right p-float-label">
+      <i class="pi pi-{{ icon }}"></i>
+      <input
+        pInputText
+        id="{{ name }}"
+        [formControl]="FormControlRef"
+        [class.ng-invalid]="ControlIsInvalid"
+        [class.ng-dirty]="ControlIsInvalid"
+      />
+      <label htmlFor="{{ name }}">{{ label }}</label>
+    </span>
+    <small *ngIf="ControlIsInvalid">
+      {{ getErrorMessage() }}
+    </small>
+  </span>
+
+  <!-- Render without icons-->
+  <ng-template #simpleInput>
+    <div class="flex flex-column gap-2">
+      <span class="p-float-label">
+        <input
+          pInputText
+          id="{{ name }}"
+          [formControl]="FormControlRef"
+          [class.ng-invalid]="ControlIsInvalid"
+          [class.ng-dirty]="ControlIsInvalid"
+        />
+        <label htmlFor="{{ name }}">{{ label }}</label>
+      </span>
+      <small *ngIf="ControlIsInvalid">
+        {{ getErrorMessage() }}
+      </small>
+    </div>
+  </ng-template>
 </div>

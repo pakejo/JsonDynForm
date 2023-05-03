@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { DynFormService } from '../../services/dyn-form.service';
 import { FormControl } from '@angular/forms';
+import { DynFormService } from '../../services/dyn-form.service';
+import { InputParams } from '../interfaces/InputParams.interface';
 
 @Component({
   selector: 'app-input',
@@ -10,22 +11,37 @@ import { FormControl } from '@angular/forms';
 export class InputComponent implements OnInit {
   name = '';
 
-  placeholder = '';
+  label = '';
 
-  validations = [];
+  icon = '';
+
+  controlRef!: FormControl;
 
   @Input() JsonPath = '';
 
-  @Input() set data(value: any) {
+  @Input() set data(value: InputParams) {
     this.name = value.name;
-    this.placeholder = value.placeholder;
+    this.label = value.label;
+    this.icon = value.icon;
   }
 
   constructor(private DynFormService: DynFormService) {}
 
   get FormControlRef() {
-    return this.DynFormService.getAbstractControl(this.JsonPath) as FormControl;
+    return this.controlRef;
   }
 
-  ngOnInit(): void {}
+  get ControlIsInvalid() {
+    return this.controlRef?.invalid && this.controlRef.touched;
+  }
+
+  ngOnInit(): void {
+    this.controlRef = this.DynFormService.getAbstractControl(
+      this.JsonPath
+    ) as FormControl;
+  }
+
+  getErrorMessage() {
+    return 'Generic Error Message';
+  }
 }

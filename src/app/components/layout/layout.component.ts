@@ -13,6 +13,7 @@ import {
   FlayoutConfig,
   LayoutContent,
 } from '../interfaces/FlayoutConfig.interface';
+import { Layouts } from 'src/app/enums/layouts.enum';
 
 @Component({
   selector: 'app-layout',
@@ -68,7 +69,7 @@ export class LayoutComponent implements OnInit {
 
     Object.entries(this.content as LayoutContent).forEach(
       ([key, entryContent]) => {
-        if (key == 'F-layout') {
+        if (key == Layouts.FLayout) {
           const { config, content } = entryContent as any;
           renderer.RenderLayout(this.JsonPath, config, content);
         } else if (Array.isArray(entryContent)) {

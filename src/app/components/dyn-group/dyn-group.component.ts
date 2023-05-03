@@ -4,6 +4,7 @@ import { DynGroupDirective } from 'src/app/directives/dyn-group.directive';
 import { DynFormService } from 'src/app/services/dyn-form.service';
 import { ObjectChildsAreObjects } from 'src/app/utils/objects-utils';
 import { FormRenderer } from '../../classes/FormRenderer';
+import { Layouts } from 'src/app/enums/layouts.enum';
 
 @Component({
   selector: 'app-dyn-group',
@@ -32,7 +33,7 @@ export class DynGroupComponent implements OnInit {
     );
 
     Object.entries(this.data).forEach(([key, entryContent]) => {
-      if (key === 'F-layout') {
+      if (key === Layouts.FLayout) {
         const { config, content } = entryContent as any;
 
         renderer.RenderLayout(this.JsonPath, config, content);
