@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { RetryBackoffConfig, retryBackoff } from 'backoff-rxjs';
+import * as jp from 'jsonpath';
 import { map } from 'rxjs';
 
 @Injectable({
@@ -15,6 +16,44 @@ export class FetchService {
 
   constructor(private http: HttpClient) {}
 
+  private mapToPath(list: any[], path: string) {
+    return list
+      .map((entry) => jp.query(entry, path))
+      .map((entry) => ({ display: entry, value: entry }));
+  }
+
+  private sortObjectList(list: any[], sortOrder: string) {
+    switch (sortOrder) {
+      case 'asc':
+        return list
+          .sort((a, b) =>
+            a.display > b.display ? 1 : b.display > a.display ? -1 : 0
+          )
+          .reverse();
+
+      case 'desc':
+        return list.sort((a, b) =>
+          a.display > b.display ? 1 : b.display > a.display ? -1 : 0
+        );
+
+      default:
+        return list;
+    }
+  }
+
+  private sort(list: any[], sortOrder: string) {
+    switch (sortOrder) {
+      case 'asc':
+        return list.sort().reverse();
+
+      case 'desc':
+        return list.sort();
+
+      default:
+        return list;
+    }
+  }
+
   /**
    * This function fetches data from a given URL and returns it, optionally filtering it by a specified
    * path.
@@ -25,14 +64,17 @@ export class FetchService {
    * array.
    * @returns Observable that emits an array of type `any[]`.
    */
-  fetchDataList(url: string, path?: string) {
+  fetchDataList(url: string, path?: string, sortOrder?: string | undefined) {
     return this.http.get<any[]>(url).pipe(
       retryBackoff(this.retryConfig),
+      map((value) => (path ? this.mapToPath(value, path) : value)),
       map((value) => {
-        if (path)
-          return value.map((entry) =>
-            path.split('.').reduce((acc, cur) => acc[cur], entry)
-          );
+        if (sortOrder && path) {
+          this.sortObjectList(value, sortOrder);
+        }
+        if (sortOrder && !path) {
+          this.sort(value, sortOrder);
+        }
         return value;
       })
     );
