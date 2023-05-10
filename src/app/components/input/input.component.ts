@@ -1,7 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { InputParams } from '../../interfaces/InputParams.interface';
 import { DynFormService } from '../../services/dyn-form.service';
-import { InputParams } from '../interfaces/InputParams.interface';
+import { ErrorsService } from '../../services/errors.service';
+import { ValidationsService } from '../../services/validations.service';
 
 @Component({
   selector: 'app-input',
@@ -15,6 +17,11 @@ export class InputComponent implements OnInit {
 
   icon = '';
 
+  validations!: {
+    sync: any[];
+    async: any[];
+  };
+
   controlRef!: FormControl;
 
   @Input() JsonPath = '';
@@ -23,25 +30,41 @@ export class InputComponent implements OnInit {
     this.name = value.name;
     this.label = value.label;
     this.icon = value.icon;
+    this.validations = value.validations;
   }
 
-  constructor(private DynFormService: DynFormService) {}
+  constructor(
+    private DynFormService: DynFormService,
+    private readonly validationService: ValidationsService,
+    private readonly errorsService: ErrorsService
+  ) {}
 
   get FormControlRef() {
     return this.controlRef;
   }
 
   get ControlIsInvalid() {
-    return this.controlRef?.invalid && this.controlRef.touched;
+    return (
+      this.controlRef?.invalid &&
+      (this.controlRef.dirty || this.controlRef.touched)
+    );
   }
 
   ngOnInit(): void {
     this.controlRef = this.DynFormService.getAbstractControl(
       this.JsonPath
     ) as FormControl;
+
+    this.controlRef.setValidators(
+      this.validationService.buildSyncValidations(this.validations.sync)
+    );
+
+    this.controlRef.setAsyncValidators(
+      this.validationService.buildAsynValidations(this.validations.async)
+    );
   }
 
   getErrorMessage() {
-    return 'Generic Error Message';
+    return this.errorsService.getFieldErrorMessage(this.FormControlRef);
   }
 }

@@ -4,4 +4,8 @@ export interface InputParams {
   name: string;
   label: string;
   icon: string;
+  validations: {
+    sync: any[];
+    async: any[];
+  };
 }

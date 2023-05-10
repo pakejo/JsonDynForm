@@ -12,7 +12,7 @@ import { DynFormService } from '../../services/dyn-form.service';
 import {
   FlayoutConfig,
   LayoutContent,
-} from '../interfaces/FlayoutConfig.interface';
+} from '../../interfaces/FlayoutConfig.interface';
 import { Layouts } from 'src/app/enums/layouts.enum';
 
 @Component({

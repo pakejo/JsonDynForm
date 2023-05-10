@@ -1,5 +1,5 @@
-import { LayoutContent } from '../components/interfaces/FlayoutConfig.interface';
-import { FlayoutConfig } from '../components/interfaces/FlayoutConfig.interface';
+import { LayoutContent } from '../interfaces/FlayoutConfig.interface';
+import { FlayoutConfig } from '../interfaces/FlayoutConfig.interface';
 
 export interface IRenderizable {
   RenderLayout(

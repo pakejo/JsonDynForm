@@ -1,10 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { DynFormService } from 'src/app/services/dyn-form.service';
-import { SelectOption } from '../interfaces/SelectOption.interface';
-import { SelectParams } from '../interfaces/SelectParams.interface';
-import { Observable } from 'rxjs';
+import { DynFormService } from '../../services/dyn-form.service';
+import { ValidationsService } from '../../services/validations.service';
+import { SelectOption } from '../../interfaces/SelectOption.interface';
+import { SelectParams } from '../../interfaces/SelectParams.interface';
 import { FetchService } from '../../services/fetch.service';
+import { ErrorsService } from '../../services/errors.service';
 
 @Component({
   selector: 'app-select',
@@ -21,10 +22,15 @@ export class SelectComponent {
   label: string = '';
   options!: SelectOption[];
   controlRef!: FormControl;
+  validations!: {
+    sync: any[];
+    async: any[];
+  };
   @Input() JsonPath: string = '';
 
   @Input() set data(value: SelectParams) {
     this.label = value.label;
+    this.validations = value.validations;
 
     if (Array.isArray(value.options)) {
       this.options = value.options;
@@ -39,7 +45,9 @@ export class SelectComponent {
 
   constructor(
     private DynFormService: DynFormService,
-    private readonly fetchService: FetchService
+    private readonly fetchService: FetchService,
+    private readonly validationService: ValidationsService,
+    private readonly errorsService: ErrorsService
   ) {}
 
   get FormControlRef() {
@@ -47,7 +55,10 @@ export class SelectComponent {
   }
 
   get ControlIsInvalid() {
-    return this.controlRef?.invalid && this.controlRef.touched;
+    return (
+      this.controlRef?.invalid &&
+      (this.controlRef.dirty || this.controlRef.touched)
+    );
   }
 
   ngOnInit(): void {
@@ -65,10 +76,18 @@ export class SelectComponent {
     } else {
       this.setFirstOptionAsDefault();
     }
+
+    this.controlRef.setValidators(
+      this.validationService.buildSyncValidations(this.validations.sync)
+    );
+
+    this.controlRef.setAsyncValidators(
+      this.validationService.buildAsynValidations(this.validations.async)
+    );
   }
 
   getErrorMessage() {
-    return 'Generic Error Message';
+    return this.errorsService.getFieldErrorMessage(this.FormControlRef);
   }
 
   setFirstOptionAsDefault() {

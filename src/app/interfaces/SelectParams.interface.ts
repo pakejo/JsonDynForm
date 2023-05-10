@@ -6,4 +6,8 @@ export interface SelectParams {
   type: string;
   label: string;
   options: SelectOption[] | AsyncSelectOption;
+  validations: {
+    sync: any[];
+    async: any[];
+  };
 }

@@ -7,7 +7,7 @@ import { InputComponent } from '../components/input/input.component';
 import {
   FlayoutConfig,
   LayoutContent,
-} from '../components/interfaces/FlayoutConfig.interface';
+} from '../interfaces/FlayoutConfig.interface';
 import { LayoutComponent } from '../components/layout/layout.component';
 import { IRenderizable } from './IRenderizable';
 import { ComponentFactory } from './ComponentFactory';

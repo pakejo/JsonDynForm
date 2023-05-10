@@ -79,4 +79,16 @@ export class FetchService {
       })
     );
   }
+
+  /**
+   * This function fetches generic data from a given URL using HTTP GET method with retry backoff
+   * mechanism.
+   * @param {string} url - The URL is a string that represents the address of the resource that needs
+   * to be fetched.
+   * @returns The function is returning an Observable that emits the result of an
+   * HTTP GET request to the specified URL, with retry and backoff logic applied.
+   */
+  fetchGenericData(url: string) {
+    return this.http.get(url).pipe(retryBackoff(this.retryConfig));
+  }
 }

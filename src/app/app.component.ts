@@ -26,8 +26,36 @@ export class AppComponent {
           name: 'FirstInput',
           label: 'Input',
           validations: {
-            sync: [],
-            async: [],
+            sync: [
+              {
+                type: 'required',
+              },
+              {
+                type: 'custom',
+                name: 'custom validation',
+                value: [
+                  'and',
+                  [
+                    ['value', 'greater_than', 0],
+                    [
+                      'or',
+                      [
+                        ['value', 'starts_with', '40'],
+                        ['value', 'ends_with', '1'],
+                      ],
+                    ],
+                  ],
+                ],
+              },
+            ],
+            async: [
+              {
+                type: 'custom',
+                name: 'custom val 2',
+                url: 'https://pokeapi.co/api/v2/pokemon/pikachu/',
+                value: ['and', [['value', 'equal', '$.species.name']]],
+              },
+            ],
           },
         },
         Select: {
@@ -38,10 +66,15 @@ export class AppComponent {
             sync: [],
             async: [],
           },
-          options: [
-            {display: 'Yes', value: true},
-            {display: 'No', value: false},
-          ]
+          // options: [
+          //   {display: 'Yes', value: true},
+          //   {display: 'No', value: false},
+          // ]
+          options: {
+            url: 'https://restcountries.com/v3.1/all',
+            path: '$.name.common',
+            sortOrder: 'desc',
+          },
         },
       },
     },
