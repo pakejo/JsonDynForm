@@ -27,34 +27,43 @@ export class AppComponent {
           label: 'Input',
           validations: {
             sync: [
-              {
-                type: 'required',
-              },
-              {
-                type: 'custom',
-                name: 'custom validation',
-                value: [
-                  'and',
-                  [
-                    ['value', 'greater_than', 0],
-                    [
-                      'or',
-                      [
-                        ['value', 'starts_with', '40'],
-                        ['value', 'ends_with', '1'],
-                      ],
-                    ],
-                  ],
-                ],
-              },
+              // {
+              //   type: 'required',
+              // },
+              // {
+              //   type: 'custom',
+              //   name: 'custom validation',
+              //   value: [
+              //     'and',
+              //     [
+              //       ['value', 'greater_than', 0],
+              //       [
+              //         'or',
+              //         [
+              //           ['value', 'starts_with', '40'],
+              //           ['value', 'ends_with', '1'],
+              //         ],
+              //       ],
+              //     ],
+              //   ],
+              //   message:
+              //     'Value should be greater than 0 and start with 40 or ends with 1',
+              // },
             ],
             async: [
-              {
-                type: 'custom',
-                name: 'custom val 2',
-                url: 'https://pokeapi.co/api/v2/pokemon/pikachu/',
-                value: ['and', [['value', 'equal', '$.species.name']]],
-              },
+              // {
+              //   type: 'custom',
+              //   name: 'custom val 2',
+              //   url: 'https://pokeapi.co/api/v2/pokemon/pikachu/',
+              //   value: ['and', [['value', 'equal', '$.species.name']]],
+              //   message: `Value should be equal to Pikachu`,
+              // },
+              // {
+              //   type: 'external',
+              //   name: 'external test',
+              //   url: 'https://localhost:7261/Validations/Test1',
+              //   message: 'external test validation'
+              // },
             ],
           },
         },

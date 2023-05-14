@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { RetryBackoffConfig, retryBackoff } from 'backoff-rxjs';
 import * as jp from 'jsonpath';
@@ -90,5 +90,25 @@ export class FetchService {
    */
   fetchGenericData(url: string) {
     return this.http.get(url).pipe(retryBackoff(this.retryConfig));
+  }
+
+  /**
+   * This function sends a generic HTTP POST request with retry functionality using a provided URL and
+   * request body.
+   * @param {string} url - The URL to which the HTTP POST request will be sent.
+   * @param {any} body - The `body` parameter is the data that will be sent in the request body when
+   * making an HTTP POST request to the specified `url`. It can be of any type, as long as it is
+   * compatible with the server's expected request body format.
+   * @returns The `postGenericData` function is returning an Observable that is created by calling the
+   * `post` method of the `http` object with the provided `url` and `body` parameters.
+   */
+  postGenericData(url: string, body: any) {
+    return this.http
+      .post(url, JSON.stringify(body), {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/json; charset=utf-8')
+          .set('Accept', 'application/json'),
+      })
+      .pipe(retryBackoff(this.retryConfig));
   }
 }

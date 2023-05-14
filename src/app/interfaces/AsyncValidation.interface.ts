@@ -1,5 +1,5 @@
 export interface AsyncValidation {
-  type: 'custom';
+  type: 'custom' | 'external';
   url: string;
   name: string;
   value: any;

@@ -6,12 +6,13 @@ import {
   ValidatorFn,
 } from '@angular/forms';
 import * as jp from 'jsonpath';
-import { Observable, map } from 'rxjs';
+import { Observable, map, of } from 'rxjs';
 import { BasicValidations } from '../data/basicValidations';
 import { AsyncValidation } from '../interfaces/AsyncValidation.interface';
 import { SyncValidation } from '../interfaces/SyncValidation.interface';
-import { FetchService } from './fetch.service';
+import { DynFormService } from './dyn-form.service';
 import { ErrorsService } from './errors.service';
+import { FetchService } from './fetch.service';
 
 type BasicExpression = [
   string,
@@ -36,7 +37,8 @@ type Expression = BasicExpression | LogicalExpression;
 export class ValidationsService {
   constructor(
     private readonly fetchService: FetchService,
-    private readonly errorsService: ErrorsService
+    private readonly errorsService: ErrorsService,
+    private readonly dynFormService: DynFormService
   ) {}
 
   /**
@@ -188,32 +190,98 @@ export class ValidationsService {
     return validationsList.map(
       (validation: AsyncValidation) =>
         (control: AbstractControl): Observable<ValidationErrors | null> => {
-          let url = `${validation.url}`;
+          this.errorsService.addCustomValidationMessage(
+            validation.name,
+            validation.message as string
+          );
 
-          if (validation.url.includes('value'))
-            url = validation.url.replace('value', control.value);
+          switch (validation.type) {
+            case 'custom':
+              return this.createCustomValidationRequest(validation, control);
+            case 'external':
+              return this.createExternalValidationRequest(validation);
+            default:
+              return of(null);
+          }
+        }
+    );
+  }
+
+  /**
+   * This function creates a custom validation request by replacing a placeholder value in the URL with
+   * the control's value, fetching data from the URL, and evaluating a logical expression using the
+   * response to determine if there is an error.
+   * @param {AsyncValidation} validation - AsyncValidation object containing information about the
+   * validation to be performed, including the URL to fetch data from, the name of the validation, the
+   * message to display if the validation fails, and the logical expression to evaluate the response
+   * against.
+   * @param {AbstractControl} control - An instance of the AbstractControl class, which represents a
+   * form control in Angular. It can be a FormControl, FormGroup, or FormArray. The control parameter
+   * is used to get the current value of the form control and to replace the "value" placeholder in the
+   * validation URL if it exists.
+   * @returns The `createCustomValidationRequest` function is returning an Observable that makes a HTTP
+   * request to a specified URL using the `fetchService`, and then evaluates a logical expression using
+   * the response data and a value from the control. If the expression evaluates to true, the function
+   * returns null, indicating that the validation has passed. Otherwise, it returns an error object
+   * with a message specified in the `validation` parameter
+   */
+  private createCustomValidationRequest(
+    validation: AsyncValidation,
+    control: AbstractControl
+  ) {
+    let url = `${validation.url}`;
+
+    if (validation.url.includes('value'))
+      url = validation.url.replace('value', control.value);
+
+    const errorObj = Object.create(null);
+    errorObj[validation.name] = {
+      value: validation.message,
+    };
+
+    return this.fetchService
+      .fetchGenericData(url)
+      .pipe(
+        map((response) =>
+          this.evaluateLogicalExpression(
+            this.replaceQueryControlValue(validation.value, control.value),
+            response
+          )
+            ? null
+            : errorObj
+        )
+      );
+  }
+
+  /**
+   * This function creates an external validation request using a provided validation object and
+   * returns an error object if the validation fails.
+   * @param {AsyncValidation} validation - The `validation` parameter is an object of type
+   * `AsyncValidation` which contains information about the validation to be performed, including the
+   * URL to send the validation request to and the validation message to display if the validation
+   * fails.
+   * @returns The `createExternalValidationRequest` function is returning an Observable that makes a
+   * POST request to a specified URL with some data. The response from the server is then mapped to either a
+   * null value or an error object, depending on the value of `validationResult` in the response. The
+   * error object contains a single key-value pair.
+   */
+  private createExternalValidationRequest(validation: AsyncValidation) {
+    return this.fetchService
+      .postGenericData(
+        validation.url,
+        this.dynFormService.getValidationStatus()
+      )
+      .pipe(
+        map((response) => {
+          const { validationResult } = response as any;
 
           const errorObj = Object.create(null);
           errorObj[validation.name] = {
-            value: control.value,
+            value: validation.message,
           };
 
-          return this.fetchService
-            .fetchGenericData(url)
-            .pipe(
-              map((response) =>
-                this.evaluateLogicalExpression(
-                  this.replaceQueryControlValue(
-                    validation.value,
-                    control.value
-                  ),
-                  response
-                )
-                  ? null
-                  : errorObj
-              )
-            );
-        }
-    );
+          return validationResult ? null : errorObj;
+        })
+      );
   }
 }

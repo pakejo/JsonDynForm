@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import {
-  FormGroup,
-  FormControl,
-  FormArray,
   AbstractControl,
+  FormArray,
+  FormControl,
+  FormGroup,
 } from '@angular/forms';
 
 @Injectable({
@@ -51,5 +51,54 @@ export class DynFormService {
 
   getAbstractControl(path: string) {
     return path == '' ? this.form : this.form.get(path);
+  }
+
+  getValidationStatus() {
+    let validationStatus = {};
+
+    this.extractValidationStatus(this.form, validationStatus);
+
+    return validationStatus;
+  }
+
+  private extractValidationStatus(
+    control: FormControl | FormGroup | FormArray,
+    statusObject: any
+  ) {
+    const extractBasicData = (ctrl: typeof control, obj: any) => {
+      obj.valid = ctrl.valid;
+      obj.invalid = ctrl.invalid;
+      obj.touched = ctrl.touched;
+      obj.untouched = ctrl.untouched;
+      obj.errors = ctrl.errors;
+    };
+
+    if (control instanceof FormControl) {
+      extractBasicData(control, statusObject);
+      statusObject.value = control.value;
+    } else if (control instanceof FormGroup) {
+      extractBasicData(control, statusObject);
+      statusObject.errors = control.errors;
+
+      Object.keys(control.controls).forEach((key) => {
+        statusObject[key] = {};
+        this.extractValidationStatus(
+          control.get(key) as any,
+          statusObject[key]
+        );
+      });
+    } else if (control instanceof FormArray) {
+      extractBasicData(control, statusObject);
+
+      statusObject.controls = [];
+
+      control.controls.forEach((formControl, index) => {
+        statusObject.controls[index] = {};
+        this.extractValidationStatus(
+          formControl as any,
+          statusObject.controls[index]
+        );
+      });
+    }
   }
 }
