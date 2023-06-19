@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { RetryBackoffConfig, retryBackoff } from 'backoff-rxjs';
-import * as jp from 'jsonpath';
+import { JSONPath } from 'jsonpath-plus';
 import { map } from 'rxjs';
 
 @Injectable({
@@ -18,7 +18,7 @@ export class FetchService {
 
   private mapToPath(list: any[], path: string) {
     return list
-      .map((entry) => jp.query(entry, path))
+      .map((entry) => JSONPath(path, entry, undefined, undefined))
       .map((entry) => ({ display: entry, value: entry }));
   }
 

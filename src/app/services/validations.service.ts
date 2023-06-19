@@ -5,7 +5,7 @@ import {
   ValidationErrors,
   ValidatorFn,
 } from '@angular/forms';
-import * as jp from 'jsonpath';
+import { JSONPath } from 'jsonpath-plus';
 import { Observable, map, of } from 'rxjs';
 import { BasicValidations } from '../data/basicValidations';
 import { AsyncValidation } from '../interfaces/AsyncValidation.interface';
@@ -60,13 +60,13 @@ export class ValidationsService {
 
     if (typeof obj == 'object') {
       try {
-        propValue = jp.query(obj, key, 1)[0] ?? key;
+        propValue = JSONPath(key, obj, undefined, undefined) ?? key;
       } catch (error) {}
     }
 
     if (typeof value == 'string') {
       try {
-        value = jp.query(obj, value)?.[0] ?? value;
+        value = JSONPath(value, obj, undefined, undefined) ?? value;
       } catch (error) {}
     }
 
@@ -131,8 +131,18 @@ export class ValidationsService {
     controlValue: any
   ): LogicalExpression {
     const copy: LogicalExpression = JSON.parse(JSON.stringify(expr));
-    jp.apply(copy, '$..[?(@=="value")]', (_x) => controlValue);
-    return copy;
+
+    const replaceValue = (structure: any, replacement: any): any => {
+      if (Array.isArray(structure)) {
+        return structure.map((item) => replaceValue(item, replacement));
+      } else if (structure === 'value') {
+        return replacement;
+      } else {
+        return structure;
+      }
+    };
+
+    return replaceValue(copy, controlValue);
   }
 
   /**
